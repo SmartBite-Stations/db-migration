@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: flyway-migration
+  namespace: test
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: flyway
+          image: newbenhd/flyway-migration:v2
+          command: ["flyway", "migrate"]
+          env:
+            - name: FLYWAY_URL
+              value: jdbc:postgresql://postgres.test:5432/postgres
+            - name: FLYWAY_USER
+              value: postgres
+            - name: FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: flyway-config-volume
+              mountPath: /flyway/conf
+      volumes:
+        - name: flyway-config-volume
+          configMap:
+            name: flyway-config

@@ -1,0 +1,31 @@
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: db-baseline
+  namespace: test
+spec:
+  template:
+    spec:
+      containers:
+        - name: flyway
+          image: flyway/flyway:10
+          imagePullPolicy: Always
+          command: ["flyway", "baseline", "-baselineVersion=0"]
+          env:
+            - name: FLYWAY_URL
+              value: jdbc:postgresql://postgres.test:5432/postgres
+            - name: FLYWAY_USER
+              value: postgres
+            - name: FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: config
+              mountPath: /flyway/conf
+      restartPolicy: Never
+      volumes:
+        - name: config
+          configMap:
+            name: flyway-config
