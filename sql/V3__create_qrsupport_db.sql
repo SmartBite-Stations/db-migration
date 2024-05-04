@@ -1,1 +1,2 @@
 CREATE DATABASE qrsupport;
+GRANT ALL PRIVILEGES ON DATABASE qrsupport TO newbenhd;
