@@ -5,6 +5,9 @@ on:
       - "releases/**"
     tags:
       - "v*"
+  workflow_dispatch:
+    tags:
+      - "v*"
 
 jobs:
   build_docker:
